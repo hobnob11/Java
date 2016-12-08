@@ -113,6 +113,10 @@ public class Sprite
 		return s.getBoundary().intersects( this.getBoundary() );
 	}
 	
+	public boolean onScreen(int w, int h)
+	{
+		return new Rectangle2D(0,0,w,h).contains( this.getBoundary() );
+	}
 	public String toString()
 	{
 		return " Position: [" + posX + "," + posY + "]" 
