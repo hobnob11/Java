@@ -1,6 +1,7 @@
 package uk.co.willhobson.hobicons;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
@@ -11,13 +12,18 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
+import uk.co.willhobson.hobicons.interfaces.Controllable;
+import uk.co.willhobson.hobicons.sprites.Asteroid;
 import uk.co.willhobson.hobicons.sprites.Player;
+import uk.co.willhobson.hobicons.sprites.Sprite;
 
 public class Hobicons extends Application
 {
 	public static final String Version = "V0.3";
-	public static final int ScreenWidth = 1024;
-	public static final int ScreenHeight = 1024;
+	public static final int ScreenWidth = 1600;
+	public static final int ScreenHeight = 900;
+
+	public LinkedList<Sprite> SpriteList = new LinkedList<Sprite>();
 	
 	private long before = System.nanoTime();
 	
@@ -71,9 +77,14 @@ public class Hobicons extends Application
 		//Spawners
 		GraphicsContext gc = canvas.getGraphicsContext2D();
 		
-		Player player1 = new Player();
+		Player player1 = new Player( SpriteList );
 		player1.setImage( "spazhorror" , 32 , 32 , true);
 		player1.setPos( 200, 100 );
+		
+		
+		Asteroid asteroid1 = new Asteroid( SpriteList );
+		asteroid1.setImage( "DamageControlAsteroid" , 64 , 64 , true );
+		asteroid1.setPos( ScreenWidth/2, ScreenHeight/2 );
 		
 		new AnimationTimer()
 		{
@@ -81,24 +92,19 @@ public class Hobicons extends Application
 			{
 				double elapsedTime = (now - before) / 1000000000.0;
 				before = now;
-				
-				//Inputs
-                if (input.contains("LEFT"))
-                    player1.addVel(-25,0);
-                if (input.contains("RIGHT"))
-                	player1.addVel(25,0);
-                if (input.contains("UP"))
-                	player1.addVel(0,-25);
-                if (input.contains("DOWN"))
-                	player1.addVel(0,25);
-				
-                //logic 
-                player1.update( elapsedTime );
-                
-                
-                //render
+
                 gc.clearRect( 0, 0, ScreenWidth	, ScreenHeight );
-                player1.render( gc );
+                
+                for (Sprite sprite : SpriteList)
+                {
+                	if ( sprite instanceof Controllable )
+                	{
+                		((Controllable) sprite).KeyPress( input );
+                	}
+                	
+                	sprite.update( elapsedTime );
+                	sprite.render( gc );
+                }
 			}
 			
 		}.start();

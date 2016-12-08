@@ -1,11 +1,33 @@
 package uk.co.willhobson.hobicons.sprites;
 
-import javafx.scene.canvas.GraphicsContext;
-import uk.co.willhobson.hobicons.Hobicons;
-import uk.co.willhobson.hoblib.HobFX;
+import java.util.ArrayList;
+import java.util.LinkedList;
 
-public class Player extends Sprite
+import uk.co.willhobson.hobicons.Hobicons;
+import uk.co.willhobson.hobicons.interfaces.Controllable;
+
+public class Player extends Sprite implements Controllable
 {
+	
+	public Player( LinkedList<Sprite> SpriteList )
+	{
+		super( SpriteList );
+		// TODO Auto-generated constructor stub
+	}
+	
+	
+	public void KeyPress( ArrayList<String> input )
+	{
+		//Inputs
+        if (input.contains("A"))
+            this.addVel(-25,0);
+        if (input.contains("D"))
+        	this.addVel(25,0);
+        if (input.contains("W"))
+        	this.addVel(0,-25);
+        if (input.contains("S"))
+        	this.addVel(0,25);
+	}
 	
 	@Override
 	public void update( double time )
@@ -36,10 +58,4 @@ public class Player extends Sprite
 		super.update( time );
 	}
 	
-	@Override
-	public void render( GraphicsContext gc )
-	{
-		double ang = Math.toDegrees( Math.atan2(velX,velY) );
-		HobFX.drawRotatedImage( gc, image, -ang + 90, posX, posY );
-	}
 }

@@ -3,8 +3,13 @@ package uk.co.willhobson.hobicons.sprites;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
+
+import java.util.LinkedList;
+
 import javafx.geometry.Point2D;
 import uk.co.willhobson.hobicons.Hobicons;
+import uk.co.willhobson.hoblib.Hob;
+import uk.co.willhobson.hoblib.HobFX;
 /**Sprite super class, for game objects*/
 public class Sprite
 {
@@ -16,12 +21,13 @@ public class Sprite
 	protected double width; 
 	protected double height;
 	
-	public Sprite()
+	public Sprite(LinkedList<Sprite> SpriteList)
 	{
 		posX = 0;
 		posY = 0;
 		velX = 0;
 		velY = 0;
+		SpriteList.add( this );
 	}
 	
 	/** Sets the image for the sprite to use from an image object
@@ -88,66 +94,75 @@ public class Sprite
 		velY = y;
 	}
 	
+	/** addVel Set the velocity of your sprite.
+	 * 
+	 * @param x Velocity to add to the x direction
+	 * @param y Velocity to add to the y direction
+	 */
 	public void addVel(double x, double y)
 	{
 		velX += x;
 		velY += y;
 	}
 	
+	/**Main "Think" Function, run on frame
+	 * 
+	 * @param time - Pass how long since last update in seconds
+	 */
 	public void update(double time)
 	{
+		velX = Hob.clamp( velX , -5000.0, 5000.0 );
+		velY = Hob.clamp( velY , -5000.0, 5000.0 );
 		posX += velX * time;
 		posY += velY * time;
 	}
 	
+	/** This handles all of the rendering for the object, do any fancy stuff like rotation here
+	 * 
+	 * @param gc Graphics context, passed at runtime.
+	 */
 	public void render(GraphicsContext gc)
 	{
-		gc.drawImage( image, posX, posY );
+		double ang = Math.toDegrees( Math.atan2(velX,velY) );
+		HobFX.drawRotatedImage( gc, image, -ang + 90, posX, posY );
 	}
 	
+	/** This returns a 2d rectangle representing the sprites hitbox
+	 * 
+	 * @return Rectangle2D - the bounding box of the sprite
+	 */
 	public Rectangle2D getBoundary()
 	{
 		return new Rectangle2D(posX,posY,width,height);
 	}
 	
+	/** Calculates if two sprites intersect using their bounding boxes
+	 * 
+	 * @param s the other sprite to check
+	 * @return boolean if they intersect
+	 */
 	public boolean intersects(Sprite s)
 	{
 		return s.getBoundary().intersects( this.getBoundary() );
 	}
 	
+	/** if the sprite is on screen
+	 * 
+	 * @return boolean if it is
+	 */
 	public boolean onScreen()
 	{
 		Point2D p = new Point2D(posX,posY);
 		return new Rectangle2D(0,0,Hobicons.ScreenWidth,Hobicons.ScreenHeight).contains( p );
 	}
+	
+	/** returns information such as pos and vel
+	 * 
+	 */
 	public String toString()
 	{
 		return " Position: [" + posX + "," + posY + "]" 
 				+ " Velocity: [" + velX + "," + velY + "]";
 	}
+	
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
