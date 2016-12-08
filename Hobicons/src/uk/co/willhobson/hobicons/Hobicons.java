@@ -15,7 +15,7 @@ import uk.co.willhobson.hobicons.sprites.Player;
 
 public class Hobicons extends Application
 {
-	public static final String Version = "V0.2";
+	public static final String Version = "V0.3";
 	public static final int ScreenWidth = 1024;
 	public static final int ScreenHeight = 1024;
 	
@@ -84,13 +84,13 @@ public class Hobicons extends Application
 				
 				//Inputs
                 if (input.contains("LEFT"))
-                    player1.addVel(-50,0);
+                    player1.addVel(-25,0);
                 if (input.contains("RIGHT"))
-                	player1.addVel(50,0);
+                	player1.addVel(25,0);
                 if (input.contains("UP"))
-                	player1.addVel(0,-50);
+                	player1.addVel(0,-25);
                 if (input.contains("DOWN"))
-                	player1.addVel(0,50);
+                	player1.addVel(0,25);
 				
                 //logic 
                 player1.update( elapsedTime );

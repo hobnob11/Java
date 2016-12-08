@@ -3,6 +3,8 @@ package uk.co.willhobson.hobicons.sprites;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
+import javafx.geometry.Point2D;
+import uk.co.willhobson.hobicons.Hobicons;
 /**Sprite super class, for game objects*/
 public class Sprite
 {
@@ -113,9 +115,10 @@ public class Sprite
 		return s.getBoundary().intersects( this.getBoundary() );
 	}
 	
-	public boolean onScreen(int w, int h)
+	public boolean onScreen()
 	{
-		return new Rectangle2D(0,0,w,h).contains( this.getBoundary() );
+		Point2D p = new Point2D(posX,posY);
+		return new Rectangle2D(0,0,Hobicons.ScreenWidth,Hobicons.ScreenHeight).contains( p );
 	}
 	public String toString()
 	{
