@@ -1,14 +1,14 @@
 package uk.co.willhobson.hobicons.sprites;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 
 public class Asteroid extends Sprite
 {
 
-	public Asteroid( LinkedList<Sprite> SpriteList )
+	public Asteroid( HashMap<String, LinkedList<Sprite>> spriteMap )
 	{
-		super( SpriteList );
-		// TODO Auto-generated constructor stub
+		super( spriteMap );
 	}
-	
+
 }

@@ -1,25 +1,35 @@
 package uk.co.willhobson.hobicons;
 
+import java.awt.Cursor;
 import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.HashMap;
 import java.util.LinkedList;
 
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
 import uk.co.willhobson.hobicons.sprites.Sprite;
+import uk.co.willhobson.hoblib.HobSwing;
 
+@SuppressWarnings("serial")
 public class DoubleBuffer extends JPanel implements ActionListener
 {
-	private LinkedList<Sprite> spriteList;
+	private HashMap<String, LinkedList<Sprite>> spriteMap;
 
-	public DoubleBuffer( LinkedList<Sprite> sl)
+	public DoubleBuffer( HashMap<String, LinkedList<Sprite>> spriteMap )
 	{
-		spriteList = sl;
+		this.spriteMap = spriteMap;
 		Timer timer = new Timer( 1000 / Hobicons.fPS, this );
 		timer.start();
+		
+		Image cs = HobSwing.imageFromURL( "https://steamcommunity-a.akamaihd.net/economy/emoticon/csgocross" );
+		Cursor css = Toolkit.getDefaultToolkit().createCustomCursor( cs, new Point(8,8), "noscop'd");
+		setCursor( css );
 	}
 
 	@Override
@@ -33,10 +43,15 @@ public class DoubleBuffer extends JPanel implements ActionListener
 	{
 		super.paintComponent( g );
 
-		for (Sprite sprite : spriteList)
+		for (String key : spriteMap.keySet())
 		{
-			sprite.render( g );
-			Toolkit.getDefaultToolkit().sync();
+			LinkedList<Sprite> spriteList = spriteMap.get( key );
+			for (Sprite sprite : spriteList)
+			{
+				sprite.render( g );
+				Toolkit.getDefaultToolkit().sync();
+			}
 		}
+
 	}
 }

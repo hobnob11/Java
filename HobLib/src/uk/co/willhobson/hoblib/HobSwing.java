@@ -3,9 +3,6 @@ package uk.co.willhobson.hoblib;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
-import java.awt.geom.AffineTransform;
-import java.awt.image.AffineTransformOp;
-import java.awt.image.BufferedImage;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -32,7 +29,7 @@ public class HobSwing
 		double a = Math.toRadians( ang );
 		double w = i.getWidth( null );
 		double h = i.getHeight( null );
-		
+		y = y - h; // do not question that which fucking noone understands.
 		g2d.rotate( a , x , y );
 		g2d.drawImage( i, (int)(x - w/2), (int)(y - h/2), null );
 		g2d.rotate( -a , x , y );

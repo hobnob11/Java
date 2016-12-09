@@ -4,7 +4,14 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.Set;
+import java.util.TreeSet;
 
 import javax.swing.JFrame;
 import javax.swing.Timer;
@@ -15,18 +22,21 @@ import uk.co.willhobson.hobicons.sprites.Asteroid;
 import uk.co.willhobson.hobicons.sprites.Player;
 import uk.co.willhobson.hobicons.sprites.Sprite;
 
-public class Hobicons extends JFrame implements ActionListener, KeyListener, Reaper
+@SuppressWarnings("serial")
+public class Hobicons extends JFrame implements ActionListener, KeyListener, Reaper, MouseMotionListener, MouseListener
 {
 	// Config Vars
-	public static final String version = "V0.4S";
+	public static final String version = "V0.5S";
 	public static final int screenWidth = 1600;
 	public static final int screenHeight = 900;
 	public static final int tickRate = 60;
 	public static final int fPS = 60;
 
 	// Internal vars
-	private LinkedList<Sprite> spriteList = new LinkedList<Sprite>();
+	private HashMap<String, LinkedList<Sprite>> spriteMap = new HashMap<String, LinkedList<Sprite>>();
 	private LinkedList<String> inputsList = new LinkedList<String>();
+	public static LinkedList<String> controllablesList = new LinkedList<String>();
+	private int mouseX, mouseY;
 
 	private DoubleBuffer db;
 	private double buffer = System.nanoTime();
@@ -35,10 +45,12 @@ public class Hobicons extends JFrame implements ActionListener, KeyListener, Rea
 	{
 		setTitle( "Hobicons " + version );
 		setSize( screenWidth, screenHeight );
-		db = new DoubleBuffer( spriteList );
+		db = new DoubleBuffer( spriteMap );
 		setContentPane( db );
 		addKeyListener( this );
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		addMouseMotionListener( this );
+		addMouseListener( this );
+		setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
 	}
 
 	///////////////////////////////////////////////////////////
@@ -49,49 +61,65 @@ public class Hobicons extends JFrame implements ActionListener, KeyListener, Rea
 		Timer timer = new Timer( 1000 / tickRate, this );
 		timer.start();
 
-		Player player1 = new Player( spriteList );
+		Player player1 = new Player( spriteMap );
+		player1.addReaper( this );
 		player1.setImage( "spazhorror", 32, 32 );
 		player1.setPos( screenWidth / 2, screenHeight / 2 );
-
-		Asteroid as1 = new Asteroid( spriteList );
-		as1.setImage( "DamageControlAsteroid", 32, 32 );
-		as1.setPos( 600, 100 );
-		as1.addReaper( this );
 		
-		Asteroid as2 = new Asteroid( spriteList );
-		as2.setImage( "DamageControlAsteroid", 32, 32 );
-		as2.setPos( 650, 200 );
-		as2.addReaper( this );
+		for (int i = 0; i <= 5; i++)
+		{
+			Asteroid as = new Asteroid( spriteMap );
+			as.addReaper( this );
+			as.setImage( "asteroid", 32, 32 );
+			double x = Math.random() * (double) screenWidth;
+			double y = Math.random() * (double) screenHeight;
+			as.setPos( x, y );
+		}
+		
+		System.out.println( controllablesList );
 	}
+
 	/////////////////////////////////////////////////////
 	// ELSE //
 	/////////////////////////////////////////////////////
-
-	// Game Logic, run at 60fps because memes.
 	public void actionPerformed( ActionEvent ev )
 	{
 		double now = System.nanoTime();
 		double elapsedTime = (now - buffer) / 1000000000.0;
 		buffer = now;
-
-		for (Sprite sprite : spriteList)
+		
+		HashSet<String> keys = new HashSet<String>();
+		keys.addAll( spriteMap.keySet() );
+		for (String key : keys)
 		{
-			if (sprite instanceof Controllable)
+			LinkedList<Sprite> idk = new LinkedList<Sprite>();
+			idk.addAll( spriteMap.get( key ) );
+			for (Sprite sprite : idk)
 			{
-				((Controllable) sprite).KeyPress( inputsList );
-				
-				//collision detection
-				for (Sprite target : spriteList)
+				if (controllablesList.contains( key ))
 				{
-					if (sprite.intersects( target ) && sprite!=target)
+					Controllable cSprite = ((Controllable) sprite);
+					cSprite.keyPress( inputsList );
+					cSprite.mouseMove( mouseX, mouseY );
+				}
+				sprite.update( elapsedTime );
+			}
+		}
+		if (spriteMap.get( "Projectiles" ) != null)
+		{
+			for (Sprite projectile : spriteMap.get( "Projectiles" ))
+			{
+				LinkedList<Sprite> asteroids = new LinkedList<Sprite>();
+				asteroids.addAll( spriteMap.get( "Asteroids" ) );
+				for (Sprite asteroid : asteroids)
+				{
+					if (projectile.intersects( asteroid ))
 					{
-						System.out.println( "die diedie!" );
-						target.kill();
+						System.out.println( "FUCK U" );
+						asteroid.kill();
 					}
 				}
-				
 			}
-			sprite.update( elapsedTime );
 		}
 	}
 
@@ -115,19 +143,15 @@ public class Hobicons extends JFrame implements ActionListener, KeyListener, Rea
 		{
 			public void run( )
 			{
-				Hobicons main = new Hobicons();
+				new Hobicons();
 			}
 		} );
 	}
 
-	@Override
 	public void keyTyped( KeyEvent e )
 	{
-		// TODO Auto-generated method stub
-
 	}
 
-	@Override
 	public void keyPressed( KeyEvent e )
 	{
 		String key = KeyEvent.getKeyText( e.getKeyCode() );
@@ -137,17 +161,52 @@ public class Hobicons extends JFrame implements ActionListener, KeyListener, Rea
 		}
 	}
 
-	@Override
 	public void keyReleased( KeyEvent e )
 	{
 		String key = KeyEvent.getKeyText( e.getKeyCode() );
 		inputsList.remove( key );
 	}
 
-	@Override
 	public void DieDieDie( Sprite s )
 	{
-		spriteList.remove( s );
+		spriteMap.get( s.getClass().getSimpleName() ).remove( s );
+	}
+
+	public void mouseMoved( MouseEvent e )
+	{
+		mouseX = e.getX();
+		mouseY = e.getY();
+	}
+
+	public void mousePressed( MouseEvent e )
+	{
+		if (!inputsList.contains( "MOUSECLICK" ))
+		{
+			inputsList.add( "MOUSECLICK" );
+		}
+	}
+
+	public void mouseReleased( MouseEvent e )
+	{
+		inputsList.remove( "MOUSECLICK" );
+	}
+
+	public void mouseDragged( MouseEvent e )
+	{
+		mouseX = e.getX();
+		mouseY = e.getY();
+	}
+
+	public void mouseClicked( MouseEvent e )
+	{
+	}
+
+	public void mouseEntered( MouseEvent e )
+	{
+	}
+
+	public void mouseExited( MouseEvent e )
+	{
 	}
 
 }

@@ -4,6 +4,7 @@ import java.util.LinkedList;
 
 public interface Controllable
 {
-	public void KeyPress( LinkedList<String> inputsList );
-	
+	public void register( );
+	public void keyPress( LinkedList<String> inputsList );
+	public void mouseMove( int x, int y);
 }

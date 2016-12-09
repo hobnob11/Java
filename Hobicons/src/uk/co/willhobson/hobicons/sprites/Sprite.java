@@ -4,6 +4,7 @@ import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.util.HashMap;
 import java.util.LinkedList;
 
 import uk.co.willhobson.hobicons.Hobicons;
@@ -24,14 +25,26 @@ public class Sprite
 	protected double angle;
 	protected Reaper gabriel;
 
-	public Sprite( LinkedList<Sprite> SpriteList )
+	public Sprite( HashMap<String, LinkedList<Sprite>> spriteMap )
 	{
 		posX = 0;
 		posY = 0;
 		velX = 0;
 		velY = 0;
 		angle = 0;
-		SpriteList.add( this );
+		LinkedList<Sprite> spriteList = spriteMap.get( this.getClass().getSimpleName() );
+		if(spriteList != null)
+		{
+			spriteList.add( this );
+		}
+		else
+		{
+			System.out.println( "null" );
+			spriteList = new LinkedList<Sprite>();
+			spriteList.add( this );
+			spriteMap.put( this.getClass().getSimpleName(), spriteList );
+		}
+
 	}
 
 	/**
@@ -149,7 +162,6 @@ public class Sprite
 	 */
 	public boolean intersects( Sprite s )
 	{
-		System.out.println( s.getBoundary() );
 		return s.getBoundary().intersects( this.getBoundary() );
 	}
 
