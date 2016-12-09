@@ -23,6 +23,7 @@ public class Sprite
 	protected double width;
 	protected double height;
 	protected double angle;
+	protected double angVel;
 	protected Reaper gabriel;
 
 	public Sprite( HashMap<String, LinkedList<Sprite>> spriteMap )
@@ -32,6 +33,7 @@ public class Sprite
 		velX = 0;
 		velY = 0;
 		angle = 0;
+		angVel = 0;
 		LinkedList<Sprite> spriteList = spriteMap.get( this.getClass().getSimpleName() );
 		if(spriteList != null)
 		{
@@ -39,7 +41,6 @@ public class Sprite
 		}
 		else
 		{
-			System.out.println( "null" );
 			spriteList = new LinkedList<Sprite>();
 			spriteList.add( this );
 			spriteMap.put( this.getClass().getSimpleName(), spriteList );
@@ -115,6 +116,10 @@ public class Sprite
 		angle = ang;
 	}
 
+	public void setAngVel( double angVel )
+	{
+		this.angVel = angVel;
+	}
 	/**
 	 * Main "Think" Function, run on frame
 	 * 
@@ -125,9 +130,10 @@ public class Sprite
 	{
 		velX = Hob.clamp( velX, -5000.0, 5000.0 );
 		velY = Hob.clamp( velY, -5000.0, 5000.0 );
-		// angle = Math.toDegrees( Math.atan2(velX,velY) );
+		// angle = -Math.toDegrees( Math.atan2(velX,velY) ) + 180;
 		posX += velX * time;
 		posY += velY * time;
+		angle = angle + angVel;
 	}
 
 	/**

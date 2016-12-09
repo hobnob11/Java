@@ -20,15 +20,14 @@ import uk.co.willhobson.hoblib.HobSwing;
 public class DoubleBuffer extends JPanel implements ActionListener
 {
 	private HashMap<String, LinkedList<Sprite>> spriteMap;
-
 	public DoubleBuffer( HashMap<String, LinkedList<Sprite>> spriteMap )
 	{
 		this.spriteMap = spriteMap;
 		Timer timer = new Timer( 1000 / Hobicons.fPS, this );
 		timer.start();
 		
-		Image cs = HobSwing.imageFromURL( "https://steamcommunity-a.akamaihd.net/economy/emoticon/csgocross" );
-		Cursor css = Toolkit.getDefaultToolkit().createCustomCursor( cs, new Point(8,8), "noscop'd");
+		Image cs = Toolkit.getDefaultToolkit().getImage( "assets/csgocross.png" );
+		Cursor css = Toolkit.getDefaultToolkit().createCustomCursor( cs, new Point(8,0), "noscop'd");
 		setCursor( css );
 	}
 

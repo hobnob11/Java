@@ -17,8 +17,8 @@ public class Projectile extends Sprite
 		{
 			kill();
 		}
-		angle = Math.toDegrees( Math.atan2(velX,velY) );
 		super.update( time );
+		angle = -Math.toDegrees( Math.atan2( velX, velY ) ) + 180;
 	}
 
 }

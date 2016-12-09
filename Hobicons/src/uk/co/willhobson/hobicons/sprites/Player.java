@@ -1,5 +1,9 @@
 package uk.co.willhobson.hobicons.sprites;
 
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.util.HashMap;
 import java.util.LinkedList;
 
@@ -12,9 +16,9 @@ public class Player extends Sprite implements Controllable
 	private int mouseX = 0;
 	private int mouseY = 0;
 	private int canShoot = 0;
-	private int fireRate = 2;
+	private int fireRate = 200;
 	private HashMap<String, LinkedList<Sprite>> spriteMap;
-	
+
 	public Player( HashMap<String, LinkedList<Sprite>> spriteMap )
 	{
 		super( spriteMap );
@@ -22,23 +26,22 @@ public class Player extends Sprite implements Controllable
 		this.spriteMap = spriteMap;
 	}
 
-	private void shoot()
+	private void shoot( )
 	{
-		if(canShoot == 0 )
+		if (canShoot == 0)
 		{
-			canShoot = (Hobicons.tickRate/fireRate);
-			System.out.println( "Bang!" );
-			
+			canShoot = (Hobicons.tickRate / fireRate);
+
 			Projectile proj = new Projectile( spriteMap );
 			proj.addReaper( gabriel );
-			proj.setImage( "nepnep" , 8, 8 );
+			proj.setImage( "nepnep", 16, 16 );
 			int vel = 400;
 			proj.setPos( posX, posY );
-			proj.setVel( Math.sin(angle)*vel, Math.cos( angle )*vel );
-			
+			proj.setVel( Math.cos( Math.toRadians( angle) ) * vel, Math.sin(Math.toRadians( angle) ) * vel );
+
 		}
 	}
-	
+
 	public void keyPress( LinkedList<String> inputsList )
 	{
 		// Inputs
@@ -67,8 +70,8 @@ public class Player extends Sprite implements Controllable
 	@Override
 	public void update( double time )
 	{
-		canShoot = (int)Hob.clamp( (double)canShoot - 1.0, 0.0, 999999.0 );
-		
+		canShoot = (int) Hob.clamp( (double) canShoot - 1.0, 0.0, 999999.0 );
+
 		if (!onScreen())
 		{
 			int x = Hobicons.screenWidth;
@@ -92,11 +95,22 @@ public class Player extends Sprite implements Controllable
 		angle = -Math.toDegrees( Math.atan2( posX - mouseX, posY - mouseY ) ) - 90;
 		super.update( time );
 	}
-
+	
+	@Override
+	public void render( Graphics g )
+	{
+		super.render( g );
+		Graphics2D g2d = (Graphics2D)g;
+		g2d.setPaint(Color.red);
+        g2d.setFont(new Font("Serif", Font.BOLD, 20));
+		g2d.drawString( "X: " + posX + " Y: " + posY + " A: " + (int)angle, 10, 20 );
+		g2d.drawString( "FPS " + (int)((1/Hobicons.elapsedTime)) , 10, 40 );
+	}
+	
+	
 	@Override
 	public void register( )
 	{
-		System.out.println( "WASDP" );
 		Hobicons.controllablesList.add( this.getClass().getSimpleName() );
 	}
 

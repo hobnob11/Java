@@ -26,12 +26,12 @@ import uk.co.willhobson.hobicons.sprites.Sprite;
 public class Hobicons extends JFrame implements ActionListener, KeyListener, Reaper, MouseMotionListener, MouseListener
 {
 	// Config Vars
-	public static final String version = "V0.5S";
-	public static final int screenWidth = 1600;
-	public static final int screenHeight = 900;
+	public static final String version = "V0.5S-Memes";
+	public static final int screenWidth = 1920;
+	public static final int screenHeight = 1080;
 	public static final int tickRate = 60;
 	public static final int fPS = 60;
-
+	public static double elapsedTime;
 	// Internal vars
 	private HashMap<String, LinkedList<Sprite>> spriteMap = new HashMap<String, LinkedList<Sprite>>();
 	private LinkedList<String> inputsList = new LinkedList<String>();
@@ -65,18 +65,20 @@ public class Hobicons extends JFrame implements ActionListener, KeyListener, Rea
 		player1.addReaper( this );
 		player1.setImage( "spazhorror", 32, 32 );
 		player1.setPos( screenWidth / 2, screenHeight / 2 );
-		
-		for (int i = 0; i <= 5; i++)
+
+		for (int i = 0; i <= 100; i++)
 		{
 			Asteroid as = new Asteroid( spriteMap );
 			as.addReaper( this );
-			as.setImage( "asteroid", 32, 32 );
+			as.setImage( "asteroid", 64, 64 );
 			double x = Math.random() * (double) screenWidth;
 			double y = Math.random() * (double) screenHeight;
 			as.setPos( x, y );
+			as.setAngVel( Math.random()*2 -1.0 );
+			as.setVel( Math.random()*20.0 -10.0, Math.random()*20.0 -10.0 );
+			as.setSize( 4 );
 		}
-		
-		System.out.println( controllablesList );
+
 	}
 
 	/////////////////////////////////////////////////////
@@ -85,9 +87,9 @@ public class Hobicons extends JFrame implements ActionListener, KeyListener, Rea
 	public void actionPerformed( ActionEvent ev )
 	{
 		double now = System.nanoTime();
-		double elapsedTime = (now - buffer) / 1000000000.0;
+		elapsedTime = (now - buffer) / 1000000000.0;
 		buffer = now;
-		
+
 		HashSet<String> keys = new HashSet<String>();
 		keys.addAll( spriteMap.keySet() );
 		for (String key : keys)
@@ -105,18 +107,20 @@ public class Hobicons extends JFrame implements ActionListener, KeyListener, Rea
 				sprite.update( elapsedTime );
 			}
 		}
-		if (spriteMap.get( "Projectiles" ) != null)
+		if (spriteMap.get( "Projectile" ) != null)
 		{
-			for (Sprite projectile : spriteMap.get( "Projectiles" ))
+			LinkedList<Sprite> projectiles = new LinkedList<Sprite>();
+			projectiles.addAll( spriteMap.get( "Projectile" ) );
+			for (Sprite projectile : projectiles)
 			{
 				LinkedList<Sprite> asteroids = new LinkedList<Sprite>();
-				asteroids.addAll( spriteMap.get( "Asteroids" ) );
+				asteroids.addAll( spriteMap.get( "Asteroid" ) );
 				for (Sprite asteroid : asteroids)
 				{
 					if (projectile.intersects( asteroid ))
 					{
-						System.out.println( "FUCK U" );
 						asteroid.kill();
+						projectile.kill();
 					}
 				}
 			}
