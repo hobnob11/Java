@@ -1,9 +1,9 @@
 package uk.co.willhobson.hobicons.interfaces;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 
 public interface Controllable
 {
-	public void KeyPress( ArrayList<String> input );
+	public void KeyPress( LinkedList<String> inputsList );
 	
 }

@@ -7,6 +7,7 @@ import java.awt.geom.Rectangle2D;
 import java.util.LinkedList;
 
 import uk.co.willhobson.hobicons.Hobicons;
+import uk.co.willhobson.hobicons.interfaces.Reaper;
 import uk.co.willhobson.hoblib.Hob;
 import uk.co.willhobson.hoblib.HobSwing;
 
@@ -21,6 +22,7 @@ public class Sprite
 	protected double width;
 	protected double height;
 	protected double angle;
+	protected Reaper gabriel;
 
 	public Sprite( LinkedList<Sprite> SpriteList )
 	{
@@ -30,34 +32,6 @@ public class Sprite
 		velY = 0;
 		angle = 0;
 		SpriteList.add( this );
-	}
-
-	/**
-	 * Sets the image for the sprite to use from an image object
-	 * 
-	 * @param i
-	 *            The Image object to use, width and height are obtained from
-	 *            this.
-	 */
-	public void setImage( Image i )
-	{
-		image = i;
-		width = i.getWidth( null );
-		height = i.getHeight( null );
-	}
-
-	/**
-	 * Sets the image for the sprite to use from the steam emoticon database,
-	 * for example to get :nepnep: you would pass "nepnep".
-	 * 
-	 * @param emoticon
-	 *            Emoticon to use, you should totally pass nepnep to this.
-	 */
-	public void setImage( String emoticon )
-	{
-		String url = "https://steamcommunity-a.akamaihd.net/economy/emoticon/" + emoticon;
-		Image i = HobSwing.imageFromURL( url );
-		this.setImage( i );
 	}
 
 	/**
@@ -72,12 +46,13 @@ public class Sprite
 	 * @param h
 	 *            Height to scale to
 	 */
-	public void setImage( String emoticon, int w, int h)
+	public void setImage( String emoticon, int w, int h )
 	{
 		String url = "https://steamcommunity-a.akamaihd.net/economy/emoticon/" + emoticon;
 		Image i = HobSwing.imageFromURL( url );
-		Image is = i.getScaledInstance( w, h, Image.SCALE_REPLICATE );
-		this.setImage( is );
+		image = i.getScaledInstance( w, h, Image.SCALE_REPLICATE );
+		width = w;
+		height = h;
 	}
 
 	/**
@@ -174,6 +149,7 @@ public class Sprite
 	 */
 	public boolean intersects( Sprite s )
 	{
+		System.out.println( s.getBoundary() );
 		return s.getBoundary().intersects( this.getBoundary() );
 	}
 
@@ -195,6 +171,16 @@ public class Sprite
 	public String toString( )
 	{
 		return " Position: [" + posX + "," + posY + "]" + " Velocity: [" + velX + "," + velY + "]";
+	}
+
+	public void addReaper( Reaper r )
+	{
+		gabriel = r;
+	}
+
+	public void kill( )
+	{
+		gabriel.DieDieDie( this );
 	}
 
 }

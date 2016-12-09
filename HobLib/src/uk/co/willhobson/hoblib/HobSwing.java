@@ -35,6 +35,7 @@ public class HobSwing
 		
 		g2d.rotate( a , x , y );
 		g2d.drawImage( i, (int)(x - w/2), (int)(y - h/2), null );
+		g2d.rotate( -a , x , y );
 		//g.drawImage( i, (int)x, (int)y, null );
 	}
 }

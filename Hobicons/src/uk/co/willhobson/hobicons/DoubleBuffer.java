@@ -19,6 +19,7 @@ public class DoubleBuffer extends JPanel implements ActionListener
 	{
 		spriteList = sl;
 		Timer timer = new Timer( 1000 / Hobicons.fPS, this );
+		timer.start();
 	}
 
 	@Override
