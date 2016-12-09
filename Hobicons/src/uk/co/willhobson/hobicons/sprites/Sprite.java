@@ -1,15 +1,14 @@
 package uk.co.willhobson.hobicons.sprites;
 
-import javafx.geometry.Rectangle2D;
-import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.image.Image;
-
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
 import java.util.LinkedList;
 
-import javafx.geometry.Point2D;
 import uk.co.willhobson.hobicons.Hobicons;
 import uk.co.willhobson.hoblib.Hob;
-import uk.co.willhobson.hoblib.HobFX;
+import uk.co.willhobson.hoblib.HobSwing;
 /**Sprite super class, for game objects*/
 public class Sprite
 {
@@ -20,6 +19,7 @@ public class Sprite
 	protected double velY;
 	protected double width; 
 	protected double height;
+	protected double angle;
 	
 	public Sprite(LinkedList<Sprite> SpriteList)
 	{
@@ -27,6 +27,7 @@ public class Sprite
 		posY = 0;
 		velX = 0;
 		velY = 0;
+		angle = 0;
 		SpriteList.add( this );
 	}
 	
@@ -37,8 +38,8 @@ public class Sprite
 	public void setImage(Image i)
 	{
 		image = i;
-		width = i.getWidth();
-		height = i.getHeight();
+		width = i.getWidth( null );
+		height = i.getHeight( null );
 	}
 	
 	/** Sets the image for the sprite to use from the steam emoticon database,
@@ -48,9 +49,7 @@ public class Sprite
 	public void setImage(String emoticon)
 	{
 		String url = "https://steamcommunity-a.akamaihd.net/economy/emoticon/" + emoticon;
-		Image i = new Image(url);
-		width = i.getWidth();
-		height = i.getHeight();
+		Image i = HobSwing.imageFromURL(url);
 		this.setImage( i );
 	}
 	
@@ -61,15 +60,13 @@ public class Sprite
 	 * @param emoticon Emoticon to use, you should totally pass nepnep to this.
 	 * @param w Width to scale to 
 	 * @param h Height to scale to
-	 * @param aspect Obey aspect ratio or not? If true image will be largest possible size in box specified. 
 	 */
 	public void setImage(String emoticon, int w, int h, boolean aspect)
 	{
 		String url = "https://steamcommunity-a.akamaihd.net/economy/emoticon/" + emoticon;
-		Image i = new Image(url,w,h, false, true);
-		width = w;
-		height = h;
-		this.setImage( i );
+		Image i = HobSwing.imageFromURL( url );
+		Image is = i.getScaledInstance( w, h, Image.SCALE_REPLICATE );
+		this.setImage( is );
 	}
 	
 	/** setPos Set the position of your sprite.
@@ -105,6 +102,11 @@ public class Sprite
 		velY += y;
 	}
 	
+	public void setAng(double ang)
+	{
+		angle = ang;
+	}
+	
 	/**Main "Think" Function, run on frame
 	 * 
 	 * @param time - Pass how long since last update in seconds
@@ -113,6 +115,7 @@ public class Sprite
 	{
 		velX = Hob.clamp( velX , -5000.0, 5000.0 );
 		velY = Hob.clamp( velY , -5000.0, 5000.0 );
+		//angle = Math.toDegrees( Math.atan2(velX,velY) );
 		posX += velX * time;
 		posY += velY * time;
 	}
@@ -121,10 +124,10 @@ public class Sprite
 	 * 
 	 * @param gc Graphics context, passed at runtime.
 	 */
-	public void render(GraphicsContext gc)
+	public void render(Graphics g)
 	{
-		double ang = Math.toDegrees( Math.atan2(velX,velY) );
-		HobFX.drawRotatedImage( gc, image, -ang + 90, posX, posY );
+
+		HobSwing.drawRotatedImage( g, image, angle, posX, posY );
 	}
 	
 	/** This returns a 2d rectangle representing the sprites hitbox
@@ -133,7 +136,7 @@ public class Sprite
 	 */
 	public Rectangle2D getBoundary()
 	{
-		return new Rectangle2D(posX,posY,width,height);
+		return new Rectangle2D.Double(posX,posY,width,height);
 	}
 	
 	/** Calculates if two sprites intersect using their bounding boxes
@@ -152,8 +155,8 @@ public class Sprite
 	 */
 	public boolean onScreen()
 	{
-		Point2D p = new Point2D(posX,posY);
-		return new Rectangle2D(0,0,Hobicons.ScreenWidth,Hobicons.ScreenHeight).contains( p );
+		Point2D p = new Point2D.Double(posX,posY);
+		return new Rectangle2D.Double(0,0,Hobicons.ScreenWidth,Hobicons.ScreenHeight).contains( p );
 	}
 	
 	/** returns information such as pos and vel
