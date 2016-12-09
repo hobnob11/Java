@@ -34,8 +34,8 @@ public class Player extends Sprite implements Controllable
 	{
 		if(!onScreen())
 		{
-			int x = Hobicons.ScreenWidth;
-			int y = Hobicons.ScreenHeight;
+			int x = Hobicons.screenWidth;
+			int y = Hobicons.screenHeight;
 			
 			if( posX < 0 )
 			{
