@@ -66,7 +66,7 @@ public class Hobicons extends JFrame implements ActionListener, KeyListener, Rea
 		player1.setImage( "spazhorror", 32, 32 );
 		player1.setPos( screenWidth / 2, screenHeight / 2 );
 
-		for (int i = 0; i <= 100; i++)
+		for (int i = 0; i <= 20; i++)
 		{
 			Asteroid as = new Asteroid( spriteMap );
 			as.addReaper( this );

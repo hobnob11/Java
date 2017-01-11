@@ -16,7 +16,7 @@ public class Player extends Sprite implements Controllable
 	private int mouseX = 0;
 	private int mouseY = 0;
 	private int canShoot = 0;
-	private int fireRate = 200;
+	private int fireRate = 100;
 	private HashMap<String, LinkedList<Sprite>> spriteMap;
 
 	public Player( HashMap<String, LinkedList<Sprite>> spriteMap )
@@ -38,7 +38,6 @@ public class Player extends Sprite implements Controllable
 			int vel = 400;
 			proj.setPos( posX, posY );
 			proj.setVel( Math.cos( Math.toRadians( angle) ) * vel, Math.sin(Math.toRadians( angle) ) * vel );
-
 		}
 	}
 

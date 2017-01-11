@@ -24,9 +24,9 @@ public class Asteroid extends Sprite
 	@Override
 	public void kill( )
 	{
-		//size = size - 1;
+		size = size - 1;
 		if(size>0) {
-			for (int i=1; i<=4; i++)
+			for (int i=1; i<=2; i++)
 			{
 				Asteroid as = new Asteroid( spriteMap );
 				as.addReaper( gabriel );
@@ -35,7 +35,7 @@ public class Asteroid extends Sprite
 				double y = Math.random() * (double) Hobicons.screenHeight;
 				as.setPos( posX, posY );
 				as.setAngVel( Math.random()*2 -1.0 );
-				as.setVel( (Math.random()*400.0 -200.0)*(5-size), (Math.random()*400.0 -200.0)*(5-size) );
+				as.setVel( (Math.random()*200.0 -100.0)*(4-size), (Math.random()*200.0 -100.0)*(4-size) );
 				as.setSize( size );
 			}
 		}
